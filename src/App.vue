@@ -1,9 +1,11 @@
 <template lang="pug">
     #app
         pm-header
+        pm-notification(v-show="showNotification")
+            p(slot="body") No se encontraron resultados
         pm-loader(v-show="isLoading")
         section.section(v-show="!isLoading")
-            nav.nav.has-shadow
+            nav.nav
                 .container
                     input.input.is-large(
                       type="text" 
@@ -17,7 +19,9 @@
             .container.results
                 .columns.is-multiline
                     .column.is-one-quarter(v-for="tr in tracks") 
-                        pm-track(:track="tr")
+                        pm-track(:track="tr", 
+                        :class="{'is-active':tr.id === selectedTrack}" 
+                        @select="setSelectedTrack")
 
         pm-footer
 </template>
@@ -33,15 +37,26 @@ import trackService from '@/services/track';
 import PmFooter from '@/component/layout/Footer.vue';
 import PmHeader from '@/component/layout/Header.vue';
 import PmTrack from '@/component/Track.vue';
+
 import PmLoader from '@/component/shared/Loader.vue';
+import PmNotification from '@/component/shared/Notification.vue';
+
 export default {
     name: 'app',
-    components: {PmFooter, PmHeader, PmTrack, PmLoader},
+    components: {
+        PmFooter, 
+        PmHeader, 
+        PmTrack, 
+        PmLoader, 
+        PmNotification
+    },
     data () {
         return {
             searchQuery: '',
             tracks: [],
-            isLoading: false
+            isLoading: false,
+            selectedTrack: '',
+            showNotification: false
 
         }
     },
@@ -53,9 +68,13 @@ export default {
 
             trackService.search(this.searchQuery)
             .then((res)=> {
+                this.showNotification = res.tracks.total === 0;
                 this.tracks = res.tracks.items;
                 this.isLoading = false;
             })
+        },
+        setSelectedTrack(id) {
+            this.selectedTrack = id;
         }
     },
     computed: {
@@ -63,13 +82,24 @@ export default {
             return `Se encontraron ${this.tracks.length} resultados.`
         }
     },
-    created() {
-        console.log('created...')
+    watch: {
+        showNotification() {
+            if (this.showNotification) {
+                setTimeout(() => {
+                    this.showNotification = false
+                }, 3000)
+            }
+        }
     }
 }
 </script>
 
 <style lang="scss">
-@import './scss/main.scss';
-
+    @import './scss/main.scss';
+    .results {
+        margin-top: 50px;
+    }
+    .is-active {
+        border:3px #23d160 solid;
+    }
 </style>

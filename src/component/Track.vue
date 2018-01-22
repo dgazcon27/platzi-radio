@@ -1,12 +1,12 @@
 <template lang="pug">
 	.card
 		.card-image
-			.figure.image.is-1by1
+			figure.image.is-1by1
 				img(:src="track.album.images[0].url")
 		.card-content
 			.media
 				.media-left
-					.figure.image-is-48x48
+					figure.image-is-48x48
 						img(:src="track.album.images[0].url")
 				.media-content
 					p.title.is-6
@@ -18,7 +18,7 @@
 				nav.level
 					.level-left
 						a.level-item
-							span.icon.is-small Reproducir
+							span.icon.is-small(@click="selectTrack") ▶
 </template>
 
 <script>
@@ -27,6 +27,11 @@
 			track: {
 				type: Object,
 				required: true
+			}
+		},
+		methods: {
+			selectTrack () {
+				this.$emit('select', this.track.id)
 			}
 		}
 	}
