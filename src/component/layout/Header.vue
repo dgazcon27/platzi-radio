@@ -12,4 +12,14 @@
 			.container.has-text-centered
 				h1.title PlatziMusic
 				h2.subtitle Escucha lo que te husta
+				pm-player
 </template>
+
+<script>
+
+import PmPlayer from '@/component/Player.vue'
+
+export default {
+	components: {PmPlayer}
+}
+</script>
