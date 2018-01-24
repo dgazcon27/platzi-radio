@@ -1,5 +1,5 @@
 <template lang="pug">
-	.card
+	.card(v-if="track && track.album")
 		.card-image
 			figure.image.is-1by1
 				img(:src="track.album.images[0].url")
@@ -14,11 +14,13 @@
 					p.subtitle.is-6 {{track.artists[0].name }}
 
 			.content
-				small {{track.duration_ms}}
+				small {{track.duration_ms | ms-to-mm}}
 				nav.level
 					.level-left
-						a.level-item
+						button.level-item.button.is-primary
 							span.icon.is-small(@click="selectTrack") ▶
+						button.level-item.go-to-track.button.is-warning
+							span.icon.is-small(@click="goToTrack(track.id)") {{track.name}}
 </template>
 
 <script>
@@ -31,13 +33,24 @@
 		},
 		methods: {
 			selectTrack () {
+				if (!this.track.preview_url) {
+					return 
+				}
 				this.$emit('select', this.track.id)
 				this.$bus.$emit('set-track', this.track)
+			},
+			goToTrack(id) {
+				if (!this.track.preview_url) {
+					return 
+				}
+				this.$router.push({name:'track', params: {id}})
 			}
 		}
 	}
 </script>
 
-<style lang="css">
-	
+<style lang="scss" scoped>
+	.go-to-track {
+		margin-left: 20px
+	}
 </style>
