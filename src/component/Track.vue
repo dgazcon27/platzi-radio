@@ -24,29 +24,24 @@
 </template>
 
 <script>
-	export default {
-		props: {
-			track: {
-				type: Object,
-				required: true
+import trackMixin from '@/mixins/track';
+export default {
+	mixins: [ trackMixin ],
+	props: {
+		track: {
+			type: Object,
+			required: true
+		}
+	},
+	methods: {
+		goToTrack(id) {
+			if (!this.track.preview_url) {
+				return 
 			}
-		},
-		methods: {
-			selectTrack () {
-				if (!this.track.preview_url) {
-					return 
-				}
-				this.$emit('select', this.track.id)
-				this.$bus.$emit('set-track', this.track)
-			},
-			goToTrack(id) {
-				if (!this.track.preview_url) {
-					return 
-				}
-				this.$router.push({name:'track', params: {id}})
-			}
+			this.$router.push({name:'track', params: {id}})
 		}
 	}
+}
 </script>
 
 <style lang="scss" scoped>
